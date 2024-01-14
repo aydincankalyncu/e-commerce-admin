@@ -13,6 +13,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import Categories from "./pages/categories/Categories";
 
 
 const queryClient = new QueryClient();
@@ -53,6 +54,10 @@ function App() {
         {
           path: "/products",
           element: <Products />,
+        },
+        {
+          path: "/categories",
+          element: <Categories />,
         },
         {
           path: "/users/:id",

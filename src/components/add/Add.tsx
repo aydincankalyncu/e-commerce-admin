@@ -1,5 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 import "./add.scss";
+import { useState } from "react";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 };
 
 const Add = (props: Props) => {
-
+  const [file, setFile] = useState<File | undefined>();
   // TEST THE API
 
   // const queryClient = useQueryClient();
@@ -46,6 +47,15 @@ const Add = (props: Props) => {
     // mutation.mutate();
     props.setOpen(false)
   };
+
+  const handleFileOnChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement  & {
+      files: FileList
+    }
+
+    setFile(target.files[0]);
+    console.log(file);
+  }
   return (
     <div className="add">
       <div className="modal">
@@ -55,13 +65,17 @@ const Add = (props: Props) => {
         <h1>Add new {props.slug}</h1>
         <form onSubmit={handleSubmit}>
           {props.columns
-            .filter((item) => item.field !== "id" && item.field !== "img")
+            .filter((item) => item.field !== "id" && item.field !== "img" && item.field !== "createdAt" && item.field !== "updatedAt")
             .map((column) => (
               <div className="item">
                 <label>{column.headerName}</label>
                 <input type={column.type} placeholder={column.field} />
               </div>
             ))}
+            <div className="item">
+                <label>Image</label>
+                <input type={"file"} name="image" multiple  onChange={handleFileOnChange} />
+              </div>
           <button>Send</button>
         </form>
       </div>

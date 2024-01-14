@@ -275,6 +275,30 @@ export const barChartBoxVisit = {
   ],
 };
 
+export const categoryRows = [
+  {
+    _id: 1,
+    image: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+    name: "Home design",
+    isActive: true,
+    createdAt: "14.01.2024"
+  },
+  {
+    _id: 2,
+    image: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    name: "Kitchen design",
+    isActive: false,
+    createdAt: "12.01.2024"
+  },
+  {
+    _id: 3,
+    image: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+    name: "Towel design",
+    isActive: true,
+    createdAt: "11.01.2024"
+  }
+]
+
 export const userRows = [
   {
     id: 1,
