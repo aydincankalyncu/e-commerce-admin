@@ -53,6 +53,7 @@ const Add = (props: Props) => {
       files: FileList
     }
 
+    console.log("Files: ", target.files);
     setFile(target.files[0]);
     console.log(file);
   }
@@ -67,12 +68,12 @@ const Add = (props: Props) => {
           {props.columns
             .filter((item) => item.field !== "id" && item.field !== "img" && item.field !== "createdAt" && item.field !== "updatedAt")
             .map((column) => (
-              <div className="item">
+              <div className="item" key={column.headerName}>
                 <label>{column.headerName}</label>
                 <input type={column.type} placeholder={column.field} />
               </div>
             ))}
-            <div className="item">
+            <div className="item" key={"img"}>
                 <label>Image</label>
                 <input type={"file"} name="image" multiple  onChange={handleFileOnChange} />
               </div>

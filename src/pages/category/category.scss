@@ -1,0 +1,33 @@
+@import "../../styles/variables.scss";
+.categoryContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: relative;
+    background-color: $main-bg;
+    width: 100%;
+
+
+    .title{
+        font-size: 25px;
+    }
+
+    .imageContainer{
+        height: 200px;
+        width: 200px;
+
+        img {
+            object-fit: cover;
+            height: 200px;
+            width: 200px;
+        }
+    }
+
+    input input[type=file] {
+        height: 0;
+        overflow: hidden;
+        width: 0;
+        padding: 0!important;
+    }
+}

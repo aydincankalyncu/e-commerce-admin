@@ -1,7 +1,7 @@
 export class CreateCategoryDto {
     name: string;
     imageUrls: string;
-    isActive?: boolean;
+    isActive: boolean;
 }
 
 export class UpdateCategoryDto {

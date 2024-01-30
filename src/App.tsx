@@ -9,12 +9,9 @@ import Login from "./pages/login/Login";
 import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import Categories from "./pages/categories/Categories";
-
+import Category from "./pages/category/Category";
 
 const queryClient = new QueryClient();
 
@@ -28,9 +25,7 @@ function App() {
             <Menu />
           </div>
           <div className="contentContainer">
-            <QueryClientProvider client={queryClient}>
-              <Outlet />
-            </QueryClientProvider>
+            <Outlet />
           </div>
         </div>
         <Footer />
@@ -60,6 +55,10 @@ function App() {
           element: <Categories />,
         },
         {
+          path: "/categories/:id",
+          element: <Category/>,
+        },
+        {
           path: "/users/:id",
           element: <User />,
         },
@@ -79,7 +78,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;
