@@ -39,19 +39,26 @@ const Category = () => {
 
   // Dosya seçildiğinde çalışacak fonksiyon
   const handleFileOnChange = (e: React.FormEvent<HTMLInputElement>) => {
+    e.preventDefault();
     const target = e.target as HTMLInputElement & {
       files: FileList;
     };
 
     const file = new FileReader();
     file.onload = function () {
-      setPreview(file.result);
+      //setPreview(file.result);
     }
     file.readAsDataURL(target.files[0])
 
 
-    
-    setCategoryData({ ...categoryData, image: target.files[0].name });
+    setCategoryData({
+      ...category,
+      image: target.files[0].name
+    });
+    // setCategoryData(prevState => ({
+    //    ...prevState,
+    //     image: target.files[0].name 
+    //   }));
   };
 
   // Form submit işlemleri
