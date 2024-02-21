@@ -73,7 +73,7 @@ const AddCategory = (props: Props) => {
             id="checkboxDefault"
           />
           <label
-            className="flex pl-[0.15rem] hover:cursor-pointer"
+            className="flex pl-[0.15rem] hover:cursor-pointer text-black"
             htmlFor="checkboxDefault"
           >
             Is Active

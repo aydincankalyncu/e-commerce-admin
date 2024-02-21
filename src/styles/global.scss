@@ -11,13 +11,18 @@ a {
   text-decoration: none;
   color: inherit;
 }
+body {
+  color: $main-color;
+}
 
 .main {
   font-family: "Inter", sans-serif;
+  background-color: $main-bg;
 }
 
 .container {
   display: flex;
+  background-color: $main-bg;
 }
 
 .menuContainer {

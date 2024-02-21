@@ -1,0 +1,16 @@
+@import "../../styles/variables.scss";
+.productContainer {
+    height: 450px;
+    display: flex;
+    padding: 1rem;
+    align-items: center;
+
+    form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 400px;
+        place-items: center;
+        gap: 1rem;
+
+    }
+}   

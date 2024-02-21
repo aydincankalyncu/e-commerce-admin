@@ -1,33 +1,21 @@
 @import "../../styles/variables.scss";
-.categor2yContainer{
+.editcategoryContainer{
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     background-color: $main-bg;
-    width: 100%;
+    
+    form {
+        display: grid;
+        width: 400px;
+        place-items: start;
+        gap: 1rem;
 
-
-    .title{
-        font-size: 25px;
-    }
-
-    .imageContainer{
-        height: 200px;
-        width: 200px;
-
-        img {
-            object-fit: cover;
-            height: 200px;
-            width: 200px;
+        button {
+            width: 100%;
         }
-    }
+      }
 
-    input input[type=file] {
-        height: 0;
-        overflow: hidden;
-        width: 0;
-        padding: 0!important;
-    }
+    
 }

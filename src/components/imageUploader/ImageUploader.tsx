@@ -8,17 +8,17 @@ export type FileType = {
 }
 
 interface ImageUploaderProps {
-    onImagesChange: (images: FileType[]) => void;
+    //onImagesChange: (images: FileType[]) => void;
   }
   
-const ImageUploader = ({onImagesChange}: ImageUploaderProps) => {
+const ImageUploader = ({}: ImageUploaderProps) => {
     const [images, setImages] = useState<FileType[]>([]);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
-        onImagesChange(images);
-      }, [images, onImagesChange]);
+        //onImagesChange(images);
+      }, [images]);
 
     function selectFiles(){
         fileInputRef.current.click();
@@ -27,7 +27,7 @@ const ImageUploader = ({onImagesChange}: ImageUploaderProps) => {
     function deleteImage(index: number){
         setImages((prevImages) => {
             const updatedImages = prevImages.filter((_, i) => i !== index);
-            onImagesChange(updatedImages);
+            //onImagesChange(updatedImages);
             return updatedImages;
           });
     }
@@ -50,7 +50,7 @@ const ImageUploader = ({onImagesChange}: ImageUploaderProps) => {
             }
         }
         setTimeout(() => {
-            onImagesChange(images);    
+            //onImagesChange(images);    
         }, 500);
     }
 
@@ -83,15 +83,13 @@ const ImageUploader = ({onImagesChange}: ImageUploaderProps) => {
             }
         }
         setTimeout(() => {
-            onImagesChange(images);    
+            //onImagesChange(images);    
         }, 500);
     }
 
   return (
     <div className="card">
-        <div className="top">
-            <p>Drag & Drop image uploading</p>
-        </div>
+        
         <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
             {isDragging ? (
                 <span className="select">
