@@ -12,6 +12,7 @@ import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Categories from "./pages/categories/Categories";
 import Category from "./pages/category/Category";
+import LoginPage from "./pages/login/Login";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,7 @@ function App() {
       children: [
         {
           path: "/",
-          element: <Home />,
+          element: <LoginPage />,
         },
         {
           path: "/users",
