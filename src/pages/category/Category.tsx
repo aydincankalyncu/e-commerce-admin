@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../../api/axios";
 import { BaseDataResult, BaseResult } from "../../utils/results";
 import './category.scss'
-import ImageUploader from "../../components/imageUploader/ImageUploader";
+import ImageUploader, { FileType } from "../../components/imageUploader/ImageUploader";
 import { TEInput, TERipple } from "tw-elements-react";
 
 const Category = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [parentImages, setParentImages] = useState<FileType[]>([]);
+
+  const navigate = useNavigate();
 
   // Kategori bilgilerini tutacak state'leri tanımlayın
   const [categoryData, setCategoryData] = useState({
@@ -18,6 +20,10 @@ const Category = () => {
     image: "",
     isActive: false,
   });
+
+  const handleImagesChange = (images: FileType[]) => {
+    setParentImages(images);
+  };
 
   // Kategori bilgilerini çekmek için useQuery hook'unu kullanın
   const { data: category, isLoading, isError } = useQuery(
@@ -35,58 +41,43 @@ const Category = () => {
   );
 
   // Kategori bilgilerini güncellemek için useMutation hook'unu kullanın
-  const mutation = useMutation((updatedData) =>
-    axiosClient.put<BaseResult>(`categories/${id}`, updatedData).then((res) => res.data)
+  const mutation = useMutation((updatedData: FormData) =>
+    axiosClient.put<BaseResult>(`categories/${id}`, updatedData).then((res) => res.data),
+    {
+      onSuccess: (response: BaseResult) => {
+        if(response.hasError)
+        {
+          alert(response.message)
+        }
+        else
+        {
+          queryClient.invalidateQueries("categories");
+          navigate("/categories")
+        }
+      },
+    }
+    
   );
 
-  // Dosya seçildiğinde çalışacak fonksiyon
-  const handleFileOnChange = (e: React.FormEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const target = e.target as HTMLInputElement & {
-      files: FileList;
-    };
 
-    const file = new FileReader();
-    file.onload = function () {
-      //setPreview(file.result);
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const imageData = new FormData();
+    
+    for (let index = 0; index < parentImages.length; index++) 
+    {
+      const image = parentImages[index];
+      imageData.append("file", image.file);
+      imageData.append("imageUrl",image.name);
     }
-    file.readAsDataURL(target.files[0])
+    imageData.append("name", categoryData.name);
+    imageData.append("isActive", categoryData.isActive.toString());
 
+    mutation.mutate(imageData);
+  }
 
-    setCategoryData({
-      ...category,
-      image: target.files[0].name
-    });
-    // setCategoryData(prevState => ({
-    //    ...prevState,
-    //     image: target.files[0].name 
-    //   }));
-  };
-
-  // Form submit işlemleri
-  const handleFormSubmit = async (e: any) => {
-    e.preventDefault();
-
-    // FormData kullanarak dosya ve diğer bilgileri bir araya getirin
-    const formData = new FormData();
-    formData.append("name", categoryData.name);
-    formData.append("isActive", categoryData.isActive.toString());
-    formData.append("image", categoryData.image);
-
-    console.log(categoryData);
-
-    // mutation.mutate ile kategori bilgilerini güncelle
-    mutation.mutate(formData, {
-      onSuccess: () => {
-        // Güncelleme başarılı olduğunda kategoriyi geçersiz kıl
-        queryClient.invalidateQueries(["category", id]);
-      },
-    });
-  };
-
-  // Loading durumunu kontrol edin
   if (isLoading) return <p>Loading...</p>;
-  // Hata durumunu kontrol edin
+
   if (isError) return <p>Error</p>;
 
   return (
@@ -118,7 +109,7 @@ const Category = () => {
           </label>
         </div>
 
-        <ImageUploader />
+        <ImageUploader multiSelect={false} onImagesChange={handleImagesChange} />
 
         {/* <!--Submit button--> */}
         <TERipple rippleColor="light">
@@ -133,7 +124,7 @@ const Category = () => {
       </div>
       
         {categoryData.image && (
-              <img src={preview ? preview :`http://localhost:3000/${categoryData.image}`} alt="Current" style={{ width: "300px", height: "300px" }} />
+              <img src={`http://localhost:3000/${categoryData.image}`} alt="Current" style={{ width: "300px", height: "300px" }} />
             )}
       </div>
   );

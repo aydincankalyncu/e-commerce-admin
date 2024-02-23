@@ -8,26 +8,35 @@ export type FileType = {
 }
 
 interface ImageUploaderProps {
-    //onImagesChange: (images: FileType[]) => void;
+    onImagesChange: (images: FileType[]) => void;
+    refreshed?: boolean;
+    multiSelect: boolean;
   }
   
-const ImageUploader = ({}: ImageUploaderProps) => {
+const ImageUploader = ({onImagesChange, refreshed, multiSelect}: ImageUploaderProps) => {
     const [images, setImages] = useState<FileType[]>([]);
     const [isDragging, setIsDragging] = useState(false);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        //onImagesChange(images);
+        onImagesChange(images);
       }, [images]);
 
+      useEffect(() => {
+        setImages([]);
+      }, [refreshed]);
+
     function selectFiles(){
-        fileInputRef.current.click();
+        if(fileInputRef.current)
+        {
+            fileInputRef.current.click();
+        }
     }
 
     function deleteImage(index: number){
         setImages((prevImages) => {
             const updatedImages = prevImages.filter((_, i) => i !== index);
-            //onImagesChange(updatedImages);
+            onImagesChange(updatedImages);
             return updatedImages;
           });
     }
@@ -49,9 +58,7 @@ const ImageUploader = ({}: ImageUploaderProps) => {
                 ]);
             }
         }
-        setTimeout(() => {
-            //onImagesChange(images);    
-        }, 500);
+        onImagesChange(images);    
     }
 
     function onDragOver(event: React.DragEvent<HTMLDivElement>) {
@@ -82,9 +89,7 @@ const ImageUploader = ({}: ImageUploaderProps) => {
                 ]);
             }
         }
-        setTimeout(() => {
-            //onImagesChange(images);    
-        }, 500);
+        onImagesChange(images);
     }
 
   return (
@@ -107,7 +112,7 @@ const ImageUploader = ({}: ImageUploaderProps) => {
             }
             
             
-            <input name="file" type="file" className="file" ref={fileInputRef} onChange={onFileSelect} multiple/>
+            <input name="file" type="file" className="file" ref={fileInputRef} onChange={onFileSelect} multiple={multiSelect}/>
         </div>
         <div className="container">
             {images.map((image, index) => (
