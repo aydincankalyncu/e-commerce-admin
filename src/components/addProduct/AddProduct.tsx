@@ -2,15 +2,21 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 import "./addProduct.scss";
 import axiosClient from "../../api/axios";
-import { BaseResult } from "../../utils/results";
-import { useMutation, useQueryClient } from "react-query";
-import { TEInput, TERipple } from "tw-elements-react";
+import { BaseDataResult, BaseResult } from "../../utils/results";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { TEInput, TERipple, TESelect } from "tw-elements-react";
 import ImageUploader, { FileType } from "../imageUploader/ImageUploader";
+import { useRequestProcessor } from "../../api";
 type Props = {
   slug: string;
   columns: GridColDef[];
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+export interface CategoryDataSource {
+  text: string;
+  value: string;
+}
 
 const AddProduct = (props: Props) => {
   const [productName, setProductName] = useState("");
@@ -18,21 +24,44 @@ const AddProduct = (props: Props) => {
   const [price, setPrice] = useState(0);
   const [priceWithDiscount, setPriceWithDiscount] = useState(0);
   const [stockAmount, setStocAmount] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [parentImages, setParentImages] = useState<FileType[]>([]);
   const queryClient = useQueryClient();
+  const [categoryData, setCategoryData] = useState<CategoryDataSource[]>([{text: "Choose", value: "-1"}])
 
   const handleImagesChange = (images: FileType[]) => {
     setParentImages(images);
   };
 
+
+  const { data: category } = useQuery(
+    ["categories"],
+    () => axiosClient.get<BaseDataResult>(`categories`).then((res) => res.data),
+    {
+      onSuccess: (data: BaseDataResult) => {
+        if(!data.hasError)
+        {
+          data.data.map((category: any) => {
+            setCategoryData(prevState => [
+              ...prevState, // Önceki durumu kopyala
+              { text: category.name, value: category._id } // Yeni öğeyi ekle
+            ]);
+          })
+        }
+      },
+    }
+  );
+
   const mutation = useMutation((data: FormData) =>axiosClient.post<BaseResult>("products", data).then((res) => res.data),
     {
       onSuccess: (response: BaseResult) => {
         props.setShowModal(false);
-        if(response.hasError){
+        if(response.hasError)
+        {
           alert(response.message)
         }
-        else{
+        else
+        {
           queryClient.invalidateQueries("products");
         }
       },
@@ -51,7 +80,7 @@ const AddProduct = (props: Props) => {
     imageData.append("name", productName);
     imageData.append("description", description);
     imageData.append("images", "1.jpeg");
-    imageData.append("category", "65d526820a7d206cef43f0bc");
+    imageData.append("category", selectedCategory);
     imageData.append("price", price.toString());
     imageData.append("priceWithDiscount", priceWithDiscount.toString());
     imageData.append("stockAmount", stockAmount.toString());
@@ -71,6 +100,7 @@ const AddProduct = (props: Props) => {
           onChange={(event) => setProductName(event.target.value)}
         >
         </TEInput>
+        <TESelect data={categoryData} onValueChange={(data: any) => setSelectedCategory(data.value)}/>
         <TEInput
           type="text"
           label="Description"
@@ -111,7 +141,7 @@ const AddProduct = (props: Props) => {
           </button>
         </TERipple>
       </form>
-      <ImageUploader onImagesChange={handleImagesChange}/>
+      <ImageUploader multiSelect={true} onImagesChange={handleImagesChange}/>
       </div>
     </div>
   );

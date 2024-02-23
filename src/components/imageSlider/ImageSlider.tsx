@@ -9,7 +9,6 @@ type ImageSliderProps = {
 const ImageSlider = ({ images } : ImageSliderProps) => {
   const [current, setCurrent] = useState(0);
   const length = images.length;
-  console.log("Images: ", images);
 
   const nextSlide = () => {
     setCurrent(current === length - 1 ? 0 : current + 1);
