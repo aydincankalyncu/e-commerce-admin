@@ -7,20 +7,19 @@ import { useMutation, useQueryClient } from "react-query";
 import { TEInput, TERipple } from "tw-elements-react";
 import ImageUploader, { FileType } from "../imageUploader/ImageUploader";
 type Props = {
-  slug: string;
-  columns: GridColDef[];
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  slug          : string;
+  columns       : GridColDef[];
+  setShowModal  : React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AddCategory = (props: Props) => {
-  const [refreshed, setRefreshed] = useState(false);
-  const [isActive, setIsActive] = useState(true);
+  const [refreshed, setRefreshed]       = useState(false);
+  const [isActive, setIsActive]         = useState(true);
   const [categoryName, setCategoryName] = useState("");
   const [parentImages, setParentImages] = useState<FileType[]>([]);
-  const queryClient = useQueryClient();
+  const queryClient                     = useQueryClient();
 
   const handleImagesChange = (images: FileType[]) => {
-    console.log("Images: ", images);
     setParentImages(images);
   };
 

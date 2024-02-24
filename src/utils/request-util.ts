@@ -3,9 +3,6 @@ import { REST_URL } from "./constants";
 import { concatUrl, modifyHeader } from ".";
 
 
-export const getRequest = async<T> (url: string, data?: any) => {
-  return await axios.get<T>(concatUrl(REST_URL, url), { params: data, headers: modifyHeader() });
-}
 
 export const postRequest = async<T>(url: string, data?: any, headerShown = true) => {
   return await axios.post<T>(concatUrl(REST_URL, url), data, {

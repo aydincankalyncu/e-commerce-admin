@@ -13,6 +13,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Categories from "./pages/categories/Categories";
 import Category from "./pages/category/Category";
 import LoginPage from "./pages/login/Login";
+import Contacts from "./pages/contacts/Contacts";
+import Orders from "./pages/orders/Orders";
 
 const queryClient = new QueryClient();
 
@@ -64,13 +66,17 @@ function App() {
           element: <User />,
         },
         {
-          path: "/Contacts",
-          element: <Products />,
+          path: "/contacts",
+          element: <Contacts />,
         },
         {
           path: "/products/:id",
           element: <Product />,
         },
+        {
+          path: "/orders",
+          element: <Orders />,
+        }
       ],
     },
     {
