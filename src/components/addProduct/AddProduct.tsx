@@ -6,7 +6,11 @@ import { BaseDataResult, BaseResult } from "../../utils/results";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { TEInput, TERipple, TESelect } from "tw-elements-react";
 import ImageUploader, { FileType } from "../imageUploader/ImageUploader";
-import { useRequestProcessor } from "../../api";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
+
+
+
 type Props = {
   slug: string;
   columns: GridColDef[];
@@ -21,11 +25,12 @@ export interface CategoryDataSource {
 const AddProduct = (props: Props) => {
   const [productName, setProductName] = useState("");
   const [description, setDescriptipn] = useState("");
-  const [price, setPrice] = useState(0);
-  const [priceWithDiscount, setPriceWithDiscount] = useState(0);
-  const [stockAmount, setStocAmount] = useState(0);
+  const [price, setPrice] = useState("");
+  const [priceWithDiscount, setPriceWithDiscount] = useState("");
+  const [stockAmount, setStocAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [parentImages, setParentImages] = useState<FileType[]>([]);
+  const [categoryDataLoaded, setCategoryDataLoaded] = useState(false);
   const queryClient = useQueryClient();
   const [categoryData, setCategoryData] = useState<CategoryDataSource[]>([{text: "Choose", value: "-1"}])
 
@@ -41,12 +46,16 @@ const AddProduct = (props: Props) => {
       onSuccess: (data: BaseDataResult) => {
         if(!data.hasError)
         {
-          data.data.map((category: any) => {
-            setCategoryData(prevState => [
-              ...prevState, // Önceki durumu kopyala
-              { text: category.name, value: category._id } // Yeni öğeyi ekle
-            ]);
-          })
+          if(!categoryDataLoaded) 
+          {
+            data.data.map((category: any) => {
+              setCategoryData(prevState => [
+                ...prevState, // Önceki durumu kopyala
+                { text: category.name, value: category._id } // Yeni öğeyi ekle
+              ]);
+            })
+            setCategoryDataLoaded(true);  
+          }
         }
       },
     }
@@ -55,13 +64,13 @@ const AddProduct = (props: Props) => {
   const mutation = useMutation((data: FormData) =>axiosClient.post<BaseResult>("products", data).then((res) => res.data),
     {
       onSuccess: (response: BaseResult) => {
-        props.setShowModal(false);
         if(response.hasError)
         {
           alert(response.message)
         }
         else
         {
+          props.setShowModal(false);
           queryClient.invalidateQueries("products");
         }
       },
@@ -72,14 +81,17 @@ const AddProduct = (props: Props) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = new FormData();
-    
-    for (let index = 0; index < parentImages.length; index++) {
+    let images = "";
+    for (let index = 0; index < parentImages.length; index++) 
+    {
       const image = parentImages[index];
+      images      += image.name + ",";
       imageData.append("files", image.file);
     }
+    images = images.slice(0, -1); // Remove the last comma from the images.
     imageData.append("name", productName);
     imageData.append("description", description);
-    imageData.append("images", "1.jpeg");
+    imageData.append("images", images);
     imageData.append("category", selectedCategory);
     imageData.append("price", price.toString());
     imageData.append("priceWithDiscount", priceWithDiscount.toString());
@@ -92,7 +104,6 @@ const AddProduct = (props: Props) => {
     <div className="productContainer">
       <div className="flex columns-2 rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
       <form onSubmit={handleSubmit}>
-        {/* <!--E-mail input--> */}
         <TEInput
           type="text"
           label="Product Name"
@@ -101,6 +112,20 @@ const AddProduct = (props: Props) => {
         >
         </TEInput>
         <TESelect data={categoryData} onValueChange={(data: any) => setSelectedCategory(data.value)}/>
+        {/* <FormControl>
+        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={categoryData[0].value}
+          label="Age"
+          onChange={(event) => setSelectedCategory(event.target.value)}
+        >
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      </FormControl> */}
         <TEInput
           type="text"
           label="Description"
@@ -109,29 +134,26 @@ const AddProduct = (props: Props) => {
         >
         </TEInput>
         <TEInput
-          type="number"
+          type="text"
           label="Price"
           value={price}
-          onChange={(event) => setPrice(Number.parseInt(event.target.value))}
+          onChange={(event) => setPrice(event.target.value)}
         >
         </TEInput>
         <TEInput
-          type="number"
+          type="text"
           label="Discount price"
           value={priceWithDiscount}
-          onChange={(event) => setPriceWithDiscount(Number.parseInt(event.target.value))}
+          onChange={(event) => setPriceWithDiscount(event.target.value)}
         >
         </TEInput>
         <TEInput
-          type="number"
+          type="text"
           label="Stock Amount"
           value={stockAmount}
-          onChange={(event) => setStocAmount(Number.parseInt(event.target.value))}
+          onChange={(event) => setStocAmount(event.target.value)}
         >
         </TEInput>
-        
-
-        {/* <!--Submit button--> */}
         <TERipple rippleColor="light">
           <button
             type="submit"

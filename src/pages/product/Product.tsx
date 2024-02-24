@@ -15,6 +15,8 @@ const Product = () => {
   const [parentImages, setParentImages] = useState<FileType[]>([]);
   const [categoryData, setCategoryData] = useState<CategoryDataSource[]>([{text: "Choose", value: "-1"}])
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [productDataLoaded, setProductDataLoaded] = useState(false);
+  const [categoryDataLoaded, setCategoryDataLoaded] = useState(false);
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -38,14 +40,18 @@ const Product = () => {
       onSuccess: (data: BaseDataResult) => {
         if(!data.hasError)
         {
-          data.data.map((category: any) => {
-            setCategoryData(prevState => [
-              ...prevState, // Önceki durumu kopyala
-              { text: category.name, value: category._id } // Yeni öğeyi ekle
-            ]);
-          })
+          if(!categoryDataLoaded)
+          {
+            data.data.map((category: any) => {
+              setCategoryData(prevState => [
+                ...prevState, // Önceki durumu kopyala
+                { text: category.name, value: category._id } // Yeni öğeyi ekle
+              ]);
+            })
+            setCategoryDataLoaded(true);
+          }
         }
-      },
+      }
     }
   );
 
@@ -54,19 +60,23 @@ const Product = () => {
     () => axiosClient.get<BaseDataResult>(`products/${id}`).then((res) => res.data),
     {
       onSuccess: (data: BaseDataResult) => {
-        if(!data.hasError){
-          setProductData({
-            name: data.data.name,
-            description: data.data.description,
-            price: data.data.price,
-            priceWithDiscount: data.data.priceWithDiscount,
-            stockAmount: data.data.stockAmount,
-            categoryId: data.data.category._id,
-            images: data.data.images
-          })
-          setSelectedCategory(data.data.category.name);
+        if(!data.hasError)
+        {
+          if(!productDataLoaded)
+          {
+            setProductData({
+              name              : data.data.name,
+              description       : data.data.description,
+              price             : data.data.price,
+              priceWithDiscount : data.data.priceWithDiscount,
+              stockAmount       : data.data.stockAmount,
+              categoryId        : data.data.category?._id,
+              images            : data.data.images
+            })
+            setSelectedCategory(data.data.category.name);
+            setProductDataLoaded(true);
+          }
         }
-        
       }
     }
   )
@@ -112,10 +122,9 @@ const Product = () => {
     mutation.mutate(imageData);
   }
 
-    // Loading durumunu kontrol edin
-    if (isLoading) return <p>Loading...</p>;
-    // Hata durumunu kontrol edin
-    if (isError) return <p>Error</p>;
+  if (isLoading) return <p>Loading...</p>;
+
+  if (isError) return <p>Error</p>;
 
 
 
@@ -131,7 +140,7 @@ const Product = () => {
         >
         </TEInput>
 
-        <TESelect data={categoryData} value={selectedCategory} onValueChange={(data: any) => setProductData({ ...productData, name: data?.value })}/>
+        <TESelect data={categoryData} onValueChange={(data: any) => setProductData({ ...productData, categoryId: data?.value })}/>
 
         <TEInput
           type="text"
@@ -162,33 +171,31 @@ const Product = () => {
           onChange={(e) => setProductData({ ...productData, stockAmount: e.target.value })}
         >
         </TEInput>
-        <ImageUploader multiSelect={true} onImagesChange={handleImagesChange}/>
-        {/* <!--Submit button--> */}
-        <TERipple rippleColor="light">
-          <button
-            type="submit"
-            className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-          >
-            Submit
-          </button>
-        </TERipple>
-        <TERipple rippleColor="light">
-          <button
-            type="button"
-            className="w-full rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-            onClick={()=> navigate("/products")}
-          >
-            Cancel
-          </button>
-        </TERipple>
+        <ImageUploader  multiSelect={true} onImagesChange={handleImagesChange}/>
+        <div className="flex flex-row justify-between gap-4">
+          <TERipple rippleColor="light">
+            <button
+              type="submit"
+              className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            >
+              Submit
+            </button>
+          </TERipple>
+          <TERipple rippleColor="light">
+            <button
+              type="button"
+              className="w-full rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+              onClick={()=> navigate("/products")}
+            >
+              Cancel
+            </button>
+          </TERipple>
+        </div>
+        
       </form>
     </div>
     
     <ImageSlider images={productData.images.split(',')}/>
-      {/* <div className="productInfo"></div>
-      <div className="imageSlider">
-
-      </div> */}
     </div>
   )
 }

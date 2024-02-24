@@ -1,27 +1,25 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
+import {
+  TEModal,
+  TEModalBody,
+  TEModalContent,
+  TEModalDialog,
+  TEModalHeader
+} from "tw-elements-react";
 import { useRequestProcessor } from "../../api";
 import axiosClient from "../../api/axios";
 import CategoryGrid from "../../components/CategoryDataTable/CategorGrid";
 import AddCategory from "../../components/addCategory/AddCategory";
 import { BaseDataResult } from "../../utils/results";
 import "./categories.scss";
-import {
-  TEModal,
-  TEModalBody,
-  TEModalContent,
-  TEModalDialog,
-  TEModalFooter,
-  TEModalHeader,
-  TERipple,
-} from "tw-elements-react";
 
 const columns: GridColDef[] = [
   {
     field: "name",
     type: "string",
     headerName: "Category Name",
-    width: 150,
+    width: 300,
   },
   {
     field: "image",
@@ -40,7 +38,7 @@ const columns: GridColDef[] = [
   {
     field: "createdAt",
     headerName: "Created At",
-    width: 200,
+    width: 250,
     type: "string",
   },
 ];
