@@ -21,7 +21,7 @@ export default function LoginPage() {
     onSuccess: (data) => {
       if(!data.hasError)
       {
-        navigate("/categories");
+        navigate("/home/products");
       }
       else
       {

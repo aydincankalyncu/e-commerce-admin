@@ -1,25 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import "./navbar.scss";
 import { KEY_USER_EMAIL } from "../../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const dialogRef = useRef<HTMLInputElement>(null);
+  const dialogRef                       = useRef<HTMLInputElement>(null);
+  const navigate                        = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (dialogRef.current && !dialogRef.current.contains(event.target)) {
-        // Tıklanan element dialog içinde değilse ve dialog açıksa, dialog'u kapat
         if (isDialogOpen) {
           setIsDialogOpen(false);
         }
       }
     };
 
-    // Event listener'ı ekleyin
     document.addEventListener('mousedown', handleClickOutside);
 
-    // Component kaldırıldığında event listener'ı kaldırın
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -31,6 +30,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem(KEY_USER_EMAIL);
+    navigate("/login")
   };
 
   return (

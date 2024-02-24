@@ -1,20 +1,16 @@
-import Home from "./pages/home/Home";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Users from "./pages/users/Users";
-import Products from "./pages/products/Products";
-import Navbar from "./components/navbar/Navbar";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import Footer from "./components/footer/Footer";
 import Menu from "./components/menu/Menu";
-import Login from "./pages/login/Login";
-import "./styles/global.scss";
-import User from "./pages/user/User";
-import Product from "./pages/product/Product";
-import { QueryClient, QueryClientProvider } from "react-query";
+import Navbar from "./components/navbar/Navbar";
 import Categories from "./pages/categories/Categories";
 import Category from "./pages/category/Category";
-import LoginPage from "./pages/login/Login";
 import Contacts from "./pages/contacts/Contacts";
+import { default as Login, default as LoginPage } from "./pages/login/Login";
 import Orders from "./pages/orders/Orders";
+import Product from "./pages/product/Product";
+import Products from "./pages/products/Products";
+import "./styles/global.scss";
 
 const queryClient = new QueryClient();
 
@@ -38,49 +34,37 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
+      path: "/home",
       element: <Layout />,
       children: [
         {
-          path: "/",
-          element: <LoginPage />,
-        },
-        {
-          path: "/users",
-          element: <Users />,
-        },
-        {
-          path: "/products",
+          path: "/home/products",
           element: <Products />,
         },
         {
-          path: "/categories",
+          path: "/home/categories",
           element: <Categories />,
         },
         {
-          path: "/categories/:id",
+          path: "/home/categories/:id",
           element: <Category/>,
         },
         {
-          path: "/users/:id",
-          element: <User />,
-        },
-        {
-          path: "/contacts",
+          path: "/home/contacts",
           element: <Contacts />,
         },
         {
-          path: "/products/:id",
+          path: "/home/products/:id",
           element: <Product />,
         },
         {
-          path: "/orders",
+          path: "/home/orders",
           element: <Orders />,
         }
       ],
     },
     {
-      path: "/login",
+      path: "/",
       element: <Login />,
     },
   ]);
