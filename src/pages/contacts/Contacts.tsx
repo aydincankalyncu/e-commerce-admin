@@ -4,6 +4,7 @@ import { useRequestProcessor } from '../../api';
 import axiosClient from '../../api/axios';
 import { BaseDataResult } from '../../utils/results';
 import ContactGrid from '../../components/ContactDataTable/ContactGrid';
+import { Button } from 'flowbite-react';
 
 const columns: GridColDef[] = [
   {
@@ -53,6 +54,7 @@ const Contacts = () => {
     <div className="contacts">
         <div className='info'>
           <h1>Contacts</h1>
+          <Button>Click Me</Button>
         </div>
         <ContactGrid slug='contacts' columns={columns} rows={contacts}/>
     </div>
